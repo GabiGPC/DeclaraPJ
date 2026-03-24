@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hub PJ → IR</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">Hub PJ <span>→</span> IR</div>
+    <div class="header-sub">Organize sua vida financeira como PJ</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- MÉTRICAS -->
+  <div class="metricas">
+    <div class="metrica">
+      <div class="metrica-label">Receita bruta</div>
+      <div class="metrica-valor" id="m-receita">R$ 0</div>
+      <div class="metrica-sub" id="m-notas">0 notas emitidas</div>
+    </div>
+    <div class="metrica metrica-tributavel">
+      <div class="metrica-label">Tributável (IR)</div>
+      <div class="metrica-valor" id="m-tributavel">R$ 0</div>
+      <div class="metrica-sub">pró-labore declarado</div>
+    </div>
+    <div class="metrica metrica-isentos">
+      <div class="metrica-label">Isento (IR)</div>
+      <div class="metrica-valor" id="m-isento">R$ 0</div>
+      <div class="metrica-sub">lucro distribuído</div>
+    </div>
+  </div>
+
+  <!-- RESUMO PARA DECLARAÇÃO -->
+  <div class="declaracao-box" id="declaracao-box">
+    <div class="declaracao-titulo">O que informar na declaração do IR</div>
+    <div class="declaracao-item">
+      <span class="declaracao-chave">Rendimentos tributáveis (pró-labore)</span>
+      <span class="declaracao-valor" id="decl-tributavel">R$ 0,00</span>
+    </div>
+    <div class="declaracao-item">
+      <span class="declaracao-chave">Rendimentos isentos (lucro distribuído)</span>
+      <span class="declaracao-valor" id="decl-isento">R$ 0,00</span>
+    </div>
+  </div>
+
+  <div class="aviso">
+    <strong>Aviso:</strong> Este simulador é educativo e organizacional. Os valores calculados são uma estimativa para ajudar na organização — consulte sempre um contador para a declaração oficial.
+  </div>
+
+  <div class="secoes">
+    <!-- NOTAS FISCAIS -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-titulo">Notas fiscais emitidas</span>
+        <span class="badge badge-verde" id="badge-notas">0 notas</span>
+      </div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Data</label>
+            <input type="date" id="nota-data">
+          </div>
+          <div class="form-group">
+            <label>Valor (R$)</label>
+            <input type="number" id="nota-valor" placeholder="0,00" min="0" step="0.01">
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:10px;">
+          <label>Descrição / Cliente</label>
+          <input type="text" id="nota-desc" placeholder="Ex: Consultoria — Cliente XYZ">
+        </div>
+        <button class="btn" onclick="adicionarNota()">+ Adicionar nota</button>
+
+        <div id="lista-notas" style="margin-top:1rem;">
+          <div class="vazio">Nenhuma nota registrada ainda.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RETIRADAS E DESPESAS -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-titulo">Retiradas e despesas</span>
+        <span class="badge badge-coral">Impacto no IR</span>
+      </div>
+      <div class="card-body">
+        <div class="form-group" style="margin-bottom:12px;">
+          <label>Pró-labore total (R$)</label>
+          <input type="number" id="pro-labore" placeholder="0,00" min="0" step="0.01" oninput="recalcular()">
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label>Despesas operacionais (R$)</label>
+          <input type="number" id="despesas" placeholder="Internet, equipamentos, cursos..." min="0" step="0.01" oninput="recalcular()">
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label>Impostos pagos — DAS / ISS (R$)</label>
+          <input type="number" id="impostos" placeholder="0,00" min="0" step="0.01" oninput="recalcular()">
+        </div>
+
+        <div class="resumo-card">
+          <div class="resumo-titulo">Resumo do exercício</div>
+          <div class="resumo-linha">
+            <span class="resumo-linha-label">Receita bruta</span>
+            <span class="resumo-linha-valor" id="r-receita">R$ 0,00</span>
+          </div>
+          <div class="resumo-linha">
+            <span class="resumo-linha-label">– Despesas operacionais</span>
+            <span class="resumo-linha-valor" id="r-despesas">R$ 0,00</span>
+          </div>
+          <div class="resumo-linha">
+            <span class="resumo-linha-label">– Impostos pagos</span>
+            <span class="resumo-linha-valor" id="r-impostos">R$ 0,00</span>
+          </div>
+          <div class="resumo-linha">
+            <span class="resumo-linha-label">– Pró-labore</span>
+            <span class="resumo-linha-valor tributavel" id="r-prolabore">R$ 0,00</span>
+          </div>
+          <div class="resumo-linha">
+            <span class="resumo-linha-label">= Lucro distribuído (isento)</span>
+            <span class="resumo-linha-valor isento" id="r-lucro">R$ 0,00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
