@@ -26,6 +26,12 @@
   <!-- ABA LANÇAMENTOS -->
   <div id="pagina-lancamentos">
 
+    <div class="ano-selector">
+      <button class="ano-btn" id="ano-prev">&larr;</button>
+      <span class="ano-label" id="ano-lancamentos">2026</span>
+      <button class="ano-btn" id="ano-next">&rarr;</button>
+    </div>
+
     <div class="metricas">
       <div class="metrica">
         <div class="metrica-label">Receita bruta</div>
@@ -45,7 +51,7 @@
     </div>
 
     <div class="declaracao-box">
-      <div class="declaracao-titulo">O que informar na declaração do IR</div>
+      <div class="declaracao-titulo">O que informar na declaração do IR — <span id="decl-ano">2026</span></div>
       <div class="declaracao-item">
         <span class="declaracao-chave">Rendimentos tributáveis (pró-labore)</span>
         <span class="declaracao-valor" id="decl-tributavel">R$ 0,00</span>
@@ -57,38 +63,57 @@
     </div>
 
     <div class="aviso">
-      <strong>Aviso:</strong> Este simulador é educativo e organizacional. Os valores calculados são uma estimativa para ajudar na organização — consulte sempre um contador para a declaração oficial.
+      <strong>Aviso:</strong> Este simulador é educativo e organizacional. Os valores são uma estimativa — consulte sempre um contador para a declaração oficial.
     </div>
 
     <div class="secoes">
 
+      <!-- NOTAS POR MÊS -->
       <div class="card">
         <div class="card-header">
           <span class="card-titulo">Notas fiscais emitidas</span>
           <span class="badge badge-verde" id="badge-notas">0 notas</span>
         </div>
         <div class="card-body">
+
           <div class="form-row">
             <div class="form-group">
-              <label>Data</label>
-              <input type="date" id="nota-data">
+              <label>Mês</label>
+              <select id="nota-mes">
+                <option value="0">Janeiro</option>
+                <option value="1">Fevereiro</option>
+                <option value="2">Março</option>
+                <option value="3">Abril</option>
+                <option value="4">Maio</option>
+                <option value="5">Junho</option>
+                <option value="6">Julho</option>
+                <option value="7">Agosto</option>
+                <option value="8">Setembro</option>
+                <option value="9">Outubro</option>
+                <option value="10">Novembro</option>
+                <option value="11">Dezembro</option>
+              </select>
             </div>
             <div class="form-group">
-              <label>Valor (R$)</label>
+              <label>Total do mês (R$)</label>
               <input type="number" id="nota-valor" placeholder="0,00" min="0" step="0.01">
             </div>
           </div>
+
           <div class="form-group" style="margin-bottom:10px;">
-            <label>Descrição / Cliente</label>
-            <input type="text" id="nota-desc" placeholder="Ex: Consultoria — Cliente XYZ">
+            <label>Impostos pagos no mês — DAS / ISS (R$)</label>
+            <input type="number" id="nota-imposto" placeholder="0,00" min="0" step="0.01">
           </div>
-          <button class="btn" id="btn-adicionar">+ Adicionar nota</button>
+
+          <button class="btn" id="btn-adicionar">+ Adicionar / atualizar mês</button>
+
           <div id="lista-notas" style="margin-top:1rem;">
-            <div class="vazio">Nenhuma nota registrada ainda.</div>
+            <div class="vazio">Nenhum mês registrado ainda.</div>
           </div>
         </div>
       </div>
 
+      <!-- RETIRADAS -->
       <div class="card">
         <div class="card-header">
           <span class="card-titulo">Retiradas e despesas</span>
@@ -96,16 +121,12 @@
         </div>
         <div class="card-body">
           <div class="form-group" style="margin-bottom:12px;">
-            <label>Pró-labore total (R$)</label>
+            <label>Pró-labore total no ano (R$)</label>
             <input type="number" id="pro-labore" placeholder="0,00" min="0" step="0.01">
           </div>
           <div class="form-group" style="margin-bottom:12px;">
-            <label>Despesas operacionais (R$)</label>
+            <label>Despesas operacionais no ano (R$)</label>
             <input type="number" id="despesas" placeholder="Internet, equipamentos, cursos..." min="0" step="0.01">
-          </div>
-          <div class="form-group" style="margin-bottom:12px;">
-            <label>Impostos pagos — DAS / ISS (R$)</label>
-            <input type="number" id="impostos" placeholder="0,00" min="0" step="0.01">
           </div>
 
           <div class="resumo-card">
@@ -115,12 +136,12 @@
               <span class="resumo-linha-valor" id="r-receita">R$ 0,00</span>
             </div>
             <div class="resumo-linha">
-              <span class="resumo-linha-label">– Despesas operacionais</span>
-              <span class="resumo-linha-valor" id="r-despesas">R$ 0,00</span>
+              <span class="resumo-linha-label">– Impostos pagos (DAS/ISS)</span>
+              <span class="resumo-linha-valor" id="r-impostos">R$ 0,00</span>
             </div>
             <div class="resumo-linha">
-              <span class="resumo-linha-label">– Impostos pagos</span>
-              <span class="resumo-linha-valor" id="r-impostos">R$ 0,00</span>
+              <span class="resumo-linha-label">– Despesas operacionais</span>
+              <span class="resumo-linha-valor" id="r-despesas">R$ 0,00</span>
             </div>
             <div class="resumo-linha">
               <span class="resumo-linha-label">– Pró-labore</span>
@@ -139,6 +160,12 @@
 
   <!-- ABA DASHBOARD -->
   <div id="pagina-dashboard" style="display:none;">
+
+    <div class="ano-selector">
+      <button class="ano-btn" id="dash-ano-prev">&larr;</button>
+      <span class="ano-label" id="ano-dashboard">2026</span>
+      <button class="ano-btn" id="dash-ano-next">&rarr;</button>
+    </div>
 
     <div class="metricas">
       <div class="metrica">
@@ -166,7 +193,7 @@
       <div class="card-body">
         <div id="grafico-barras" class="grafico-wrap"></div>
         <div id="dashboard-vazio" class="vazio" style="display:none;">
-          Nenhuma nota registrada ainda. Adicione notas na aba Lançamentos.
+          Nenhuma nota registrada para este ano. Adicione notas na aba Lançamentos.
         </div>
       </div>
     </div>
