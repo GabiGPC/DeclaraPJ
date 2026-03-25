@@ -64,7 +64,6 @@ header {
   background: var(--verde-escuro);
   padding: 0 2rem;
   display: flex;
-  gap: 0;
   border-top: 1px solid rgba(255,255,255,0.1);
 }
 
@@ -95,6 +94,42 @@ main {
   max-width: 960px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
+}
+
+/* ANO SELECTOR */
+.ano-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.ano-label {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.4rem;
+  color: var(--cinza-900);
+  min-width: 60px;
+  text-align: center;
+}
+
+.ano-btn {
+  background: var(--branco);
+  border: 1px solid var(--cinza-200);
+  border-radius: var(--radius-sm);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--cinza-600);
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.ano-btn:hover {
+  background: var(--cinza-100);
+  border-color: var(--cinza-400);
 }
 
 /* MÉTRICAS */
@@ -252,14 +287,10 @@ select:focus {
   background: var(--coral-claro);
 }
 
-/* LISTA DE NOTAS */
+/* LISTA DE NOTAS (agora por mês) */
 .nota-item {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
   padding: 10px 0;
   border-bottom: 1px solid var(--cinza-100);
-  gap: 8px;
   animation: fadeIn 0.2s ease;
 }
 
@@ -267,19 +298,27 @@ select:focus {
   border-bottom: none;
 }
 
+.nota-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .nota-info {
   flex: 1;
 }
 
-.nota-desc {
+.nota-mes {
   font-size: 0.85rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--cinza-900);
 }
 
-.nota-data {
+.nota-imposto {
   font-size: 0.75rem;
-  color: var(--cinza-400);
+  color: var(--coral);
+  margin-top: 2px;
 }
 
 .nota-valor {
@@ -413,7 +452,7 @@ select:focus {
   color: var(--coral);
 }
 
-/* GRÁFICO DE BARRAS */
+/* GRÁFICO */
 .grafico-wrap {
   display: flex;
   align-items: flex-end;
@@ -431,6 +470,7 @@ select:focus {
   justify-content: flex-end;
   height: 100%;
   gap: 4px;
+  position: relative;
 }
 
 .barra {
@@ -491,25 +531,13 @@ select:focus {
 
 /* ANIMAÇÕES */
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* RESPONSIVO */
 @media (max-width: 640px) {
-  .metricas {
-    grid-template-columns: 1fr;
-  }
-  .secoes {
-    grid-template-columns: 1fr;
-  }
-  .tabs {
-    padding: 0 1rem;
-  }
+  .metricas { grid-template-columns: 1fr; }
+  .secoes   { grid-template-columns: 1fr; }
+  .tabs     { padding: 0 1rem; }
 }
