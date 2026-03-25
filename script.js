@@ -45,6 +45,7 @@ function removerNota(id) {
 
 function renderNotas() {
   var container = document.getElementById('lista-notas');
+  if (!container) return;
 
   if (notas.length === 0) {
     container.innerHTML = '<div class="vazio">Nenhuma nota registrada ainda.</div>';
@@ -55,14 +56,14 @@ function renderNotas() {
       var n = lista[i];
       var dataFmt = new Date(n.data + 'T00:00:00').toLocaleDateString('pt-BR');
       html += '<div class="nota-item">';
-      html += '  <div class="nota-info">';
-      html += '    <div class="nota-desc">' + n.desc + '</div>';
-      html += '    <div class="nota-data">' + dataFmt + '</div>';
-      html += '  </div>';
-      html += '  <div style="display:flex;align-items:center;gap:10px;">';
-      html += '    <div class="nota-valor">' + fmt(n.valor) + '</div>';
-      html += '    <button class="btn btn-outline" data-id="' + n.id + '">&times;</button>';
-      html += '  </div>';
+      html += '<div class="nota-info">';
+      html += '<div class="nota-desc">' + n.desc + '</div>';
+      html += '<div class="nota-data">' + dataFmt + '</div>';
+      html += '</div>';
+      html += '<div style="display:flex;align-items:center;gap:10px;">';
+      html += '<div class="nota-valor">' + fmt(n.valor) + '</div>';
+      html += '<button class="btn btn-outline" data-id="' + n.id + '">&times;</button>';
+      html += '</div>';
       html += '</div>';
     }
     container.innerHTML = html;
@@ -75,25 +76,27 @@ function renderNotas() {
     }
   }
 
-  document.getElementById('badge-notas').textContent = notas.length + (notas.length === 1 ? ' nota' : ' notas');
-  document.getElementById('m-notas').textContent = notas.length === 1 ? '1 nota emitida' : notas.length + ' notas emitidas';
+  var badge = document.getElementById('badge-notas');
+  if (badge) badge.textContent = notas.length + (notas.length === 1 ? ' nota' : ' notas');
+
+  var sub = document.getElementById('m-notas');
+  if (sub) sub.textContent = notas.length === 1 ? '1 nota emitida' : notas.length + ' notas emitidas';
 }
 
 function recalcular() {
-  var receita   = 0;
+  var receita = 0;
   for (var i = 0; i < notas.length; i++) { receita += notas[i].valor; }
 
   var proLabore = parseFloat(document.getElementById('pro-labore').value) || 0;
-  var despesas  = parseFloat(document.getElementById('despesas').value)  || 0;
-  var impostos  = parseFloat(document.getElementById('impostos').value)  || 0;
+  var despesas  = parseFloat(document.getElementById('despesas').value)   || 0;
+  var impostos  = parseFloat(document.getElementById('impostos').value)   || 0;
 
   var lucro      = Math.max(0, receita - despesas - impostos - proLabore);
   var tributavel = Math.min(proLabore, receita);
-  var isento     = lucro;
 
   document.getElementById('m-receita').textContent    = fmtShort(receita);
   document.getElementById('m-tributavel').textContent = fmtShort(tributavel);
-  document.getElementById('m-isento').textContent     = fmtShort(isento);
+  document.getElementById('m-isento').textContent     = fmtShort(lucro);
 
   document.getElementById('r-receita').textContent   = fmt(receita);
   document.getElementById('r-despesas').textContent  = fmt(despesas);
@@ -102,7 +105,7 @@ function recalcular() {
   document.getElementById('r-lucro').textContent     = fmt(lucro);
 
   document.getElementById('decl-tributavel').textContent = fmt(tributavel);
-  document.getElementById('decl-isento').textContent     = fmt(isento);
+  document.getElementById('decl-isento').textContent     = fmt(lucro);
 }
 
 // ── DASHBOARD ────────────────────────────────────────
@@ -111,11 +114,13 @@ function renderDashboard() {
   var ano = new Date().getFullYear();
   document.getElementById('d-ano-badge').textContent = ano;
 
-  var porMes = new Array(12).fill(0);
-  var notasAno = notas.filter(function(n) {
-    return new Date(n.data + 'T00:00:00').getFullYear() === ano;
-  });
-
+  var porMes = [0,0,0,0,0,0,0,0,0,0,0,0];
+  var notasAno = [];
+  for (var i = 0; i < notas.length; i++) {
+    if (new Date(notas[i].data + 'T00:00:00').getFullYear() === ano) {
+      notasAno.push(notas[i]);
+    }
+  }
   for (var i = 0; i < notasAno.length; i++) {
     var mes = new Date(notasAno[i].data + 'T00:00:00').getMonth();
     porMes[mes] += notasAno[i].valor;
@@ -126,30 +131,28 @@ function renderDashboard() {
 
   var impostos = parseFloat(document.getElementById('impostos').value) || 0;
 
-  var mesesComNotas = porMes.filter(function(v) { return v > 0; }).length;
+  var mesesComNotas = 0;
+  for (var m = 0; m < 12; m++) { if (porMes[m] > 0) mesesComNotas++; }
   var media = mesesComNotas > 0 ? receitaTotal / mesesComNotas : 0;
 
   var melhorValor = 0;
-  var melhorMes   = -1;
+  var melhorMes = -1;
   for (var k = 0; k < 12; k++) {
     if (porMes[k] > melhorValor) {
       melhorValor = porMes[k];
-      melhorMes   = k;
+      melhorMes = k;
     }
   }
 
-  document.getElementById('d-impostos').textContent  = fmtShort(impostos);
-  document.getElementById('d-media').textContent     = fmtShort(media);
-  document.getElementById('d-media-sub').textContent = mesesComNotas + (mesesComNotas === 1 ? ' mês com notas' : ' meses com notas');
+  document.getElementById('d-impostos').textContent     = fmtShort(impostos);
+  document.getElementById('d-media').textContent        = fmtShort(media);
+  document.getElementById('d-media-sub').textContent    = mesesComNotas + (mesesComNotas === 1 ? ' mês com notas' : ' meses com notas');
   document.getElementById('d-melhor-valor').textContent = fmtShort(melhorValor);
   document.getElementById('d-melhor-mes').textContent   = melhorMes >= 0 ? MESES[melhorMes] : '—';
-
   document.getElementById('d-receita-total').textContent  = fmt(receitaTotal);
   document.getElementById('d-impostos-total').textContent = fmt(impostos);
   document.getElementById('d-media-total').textContent    = fmt(media);
-
-  var carga = receitaTotal > 0 ? ((impostos / receitaTotal) * 100).toFixed(1) + '%' : '0%';
-  document.getElementById('d-carga').textContent = carga;
+  document.getElementById('d-carga').textContent = receitaTotal > 0 ? ((impostos / receitaTotal) * 100).toFixed(1) + '%' : '0%';
 
   var grafico = document.getElementById('grafico-barras');
   var vazio   = document.getElementById('dashboard-vazio');
@@ -163,21 +166,20 @@ function renderDashboard() {
   grafico.style.display = 'flex';
   vazio.style.display   = 'none';
 
-  var maximo = Math.max.apply(null, porMes);
-  var alturaMax = 140;
+  var maximo = 0;
+  for (var b = 0; b < 12; b++) { if (porMes[b] > maximo) maximo = porMes[b]; }
 
+  var alturaMax = 140;
   var html = '';
   for (var b = 0; b < 12; b++) {
-    var altura = maximo > 0 ? Math.round((porMes[b] / maximo) * alturaMax) : 0;
-    var isZero = porMes[b] === 0;
+    var altura     = maximo > 0 ? Math.round((porMes[b] / maximo) * alturaMax) : 0;
+    var isZero     = porMes[b] === 0;
     var valorLabel = porMes[b] > 0 ? fmtShort(porMes[b]) : '';
     html += '<div class="barra-col" style="position:relative;">';
-    html += '  <div class="barra' + (isZero ? ' barra-zero' : '') + '" style="height:' + (isZero ? 4 : altura) + 'px;">';
-    if (valorLabel) {
-      html += '    <span class="barra-valor">' + valorLabel + '</span>';
-    }
-    html += '  </div>';
-    html += '  <span class="barra-label">' + MESES[b] + '</span>';
+    html += '<div class="barra' + (isZero ? ' barra-zero' : '') + '" style="height:' + (isZero ? 4 : altura) + 'px;">';
+    if (valorLabel) html += '<span class="barra-valor">' + valorLabel + '</span>';
+    html += '</div>';
+    html += '<span class="barra-label">' + MESES[b] + '</span>';
     html += '</div>';
   }
   grafico.innerHTML = html;
@@ -207,7 +209,7 @@ function mostrarAba(aba) {
 
 // ── INIT ─────────────────────────────────────────────
 
-document.addEventListener('DOMContentLoaded', function() {
+window.onload = function() {
   var hoje = new Date().toISOString().split('T')[0];
   document.getElementById('nota-data').value = hoje;
 
@@ -215,10 +217,9 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('pro-labore').addEventListener('input', recalcular);
   document.getElementById('despesas').addEventListener('input', recalcular);
   document.getElementById('impostos').addEventListener('input', recalcular);
-
   document.getElementById('tab-lancamentos').addEventListener('click', function() { mostrarAba('lancamentos'); });
   document.getElementById('tab-dashboard').addEventListener('click', function() { mostrarAba('dashboard'); });
 
   renderNotas();
   recalcular();
-});
+};
