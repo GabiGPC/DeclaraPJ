@@ -37,8 +37,9 @@ function getRet(ano) {
 // ── LANÇAMENTOS ──────────────────────────────────────
 
 function adicionarNota() {
-  var mes    = parseInt(document.getElementById('nota-mes').value);
-  var valor  = parseFloat(document.getElementById('nota-valor').value) || 0;
+  var mes     = parseInt(document.getElementById('nota-mes').value);
+  var anoNota = parseInt(document.getElementById('nota-ano').value);
+  var valor   = parseFloat(document.getElementById('nota-valor').value) || 0;
   var imposto = parseFloat(document.getElementById('nota-imposto').value) || 0;
 
   if (valor <= 0) {
@@ -46,15 +47,26 @@ function adicionarNota() {
     return;
   }
 
-  var anoStr = String(anoLancamento);
+  var anoStr = String(anoNota);
   if (!dados[anoStr]) dados[anoStr] = {};
   dados[anoStr][String(mes)] = { valor: valor, imposto: imposto };
 
   salvar();
   document.getElementById('nota-valor').value   = '';
   document.getElementById('nota-imposto').value = '';
-  renderNotas();
-  recalcular();
+
+  // Se o ano da nota for o mesmo que está sendo visualizado, atualiza a lista
+  if (anoNota === anoLancamento) {
+    renderNotas();
+    recalcular();
+  } else {
+    // Navega para o ano da nota adicionada
+    anoLancamento = anoNota;
+    document.getElementById('ano-lancamentos').textContent = anoLancamento;
+    carregarRetiradas();
+    renderNotas();
+    recalcular();
+  }
 }
 
 function removerMes(mes) {
@@ -262,9 +274,10 @@ function mostrarAba(aba) {
 
 window.onload = function() {
 
-  // Selecionar mês atual por padrão
+  // Selecionar mês e ano atual por padrão
   var mesAtual = new Date().getMonth();
   document.getElementById('nota-mes').value = mesAtual;
+  document.getElementById('nota-ano').value = anoLancamento;
 
   // Mostrar ano atual
   document.getElementById('ano-lancamentos').textContent = anoLancamento;
